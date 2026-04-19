@@ -1,27 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Inter:wght@300;400;500;600&display=swap');
 
 :root {
-  /* Ultra-Premium "All Out" Cinematic Dark Theme */
   --color-bg-primary: #020202;
   --color-bg-secondary: #0a0a0a;
-  
   --color-text-primary: #ffffff;
   --color-text-secondary: #666666;
-  
-  --color-accent: #00ff66; /* Electric Neon Accent */
+  --color-accent: #00ff66;
   --color-border: #1a1a1a;
-  
-  /* Typography */
   --font-family-display: 'Syncopate', sans-serif;
   --font-family-body: 'Inter', sans-serif;
-  
-  /* Transitions */
   --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
   --ease-in-out-circ: cubic-bezier(0.85, 0, 0.15, 1);
   --transition-fast: 0.4s var(--ease-out-expo);
   --transition-slow: 1s var(--ease-out-expo);
-  
-  /* Spacing */
   --spacing-sm: 0.5rem;
   --spacing-md: 1.5rem;
   --spacing-lg: 3rem;
@@ -34,6 +25,15 @@
   margin: 0;
   padding: 0;
   cursor: none;
+}
+
+/* Smooth accent color transitions site-wide */
+*,
+*::before,
+*::after {
+  transition: color 0.35s ease, border-color 0.35s ease,
+              background-color 0.35s ease, box-shadow 0.35s ease,
+              fill 0.35s ease, stroke 0.35s ease;
 }
 
 body {
@@ -61,7 +61,7 @@ body {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
 
-/* Classy Custom Cursor */
+/* Custom Cursor — override the wildcard transition */
 .cursor-dot {
   position: fixed;
   top: 0; left: 0;
@@ -72,7 +72,8 @@ body {
   z-index: 10000;
   pointer-events: none;
   mix-blend-mode: difference;
-  transition: width 0.2s var(--ease-out-expo), height 0.2s var(--ease-out-expo);
+  /* explicit transitions only — do NOT inherit the wildcard */
+  transition: width 0.2s var(--ease-out-expo), height 0.2s var(--ease-out-expo) !important;
   will-change: width, height, transform;
 }
 
@@ -81,7 +82,6 @@ body {
   height: 48px;
 }
 
-/* Hide cursor followers on mobile */
 @media (max-width: 768px) {
   * { cursor: auto; }
   .cursor-dot { display: none; }
@@ -134,6 +134,8 @@ h3 { font-size: 1.5rem; letter-spacing: -0.02em; font-family: var(--font-family-
 .gap-sm { gap: var(--spacing-sm); }
 .gap-md { gap: var(--spacing-md); }
 .gap-lg { gap: var(--spacing-lg); }
+.gap-xl { gap: var(--spacing-xl); }
+.mb-xl { margin-bottom: var(--spacing-xl); }
 
 .grid { display: grid; }
 .grid-cols-2 { grid-template-columns: repeat(2, 1fr); gap: var(--spacing-lg); }
@@ -150,7 +152,7 @@ h3 { font-size: 1.5rem; letter-spacing: -0.02em; font-family: var(--font-family-
   .car-image-wrapper { height: 40vh; }
 }
 
-/* Magnetic Buttons */
+/* Buttons */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -162,13 +164,14 @@ h3 { font-size: 1.5rem; letter-spacing: -0.02em; font-family: var(--font-family-
   font-size: 1rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  transition: background var(--transition-fast), color var(--transition-fast), transform 0.1s linear;
   text-decoration: none;
   border: 1px solid rgba(255,255,255,0.2);
   background: transparent;
   color: var(--color-text-primary);
   position: relative;
   overflow: hidden;
+  /* override wildcard for transform */
+  transition: background var(--transition-fast), color var(--transition-fast), transform 0.1s linear !important;
 }
 
 .btn-primary {
@@ -189,7 +192,7 @@ h3 { font-size: 1.5rem; letter-spacing: -0.02em; font-family: var(--font-family-
   padding: 2.5rem 0;
   z-index: 100;
   mix-blend-mode: difference;
-  transition: padding var(--transition-fast);
+  transition: padding var(--transition-fast) !important;
 }
 
 .navbar.scrolled {
@@ -223,14 +226,14 @@ h3 { font-size: 1.5rem; letter-spacing: -0.02em; font-family: var(--font-family-
   bottom: -4px; left: 0; width: 100%; height: 1px;
   background: var(--color-accent);
   transform: scaleX(0); transform-origin: right;
-  transition: transform var(--transition-fast);
+  transition: transform var(--transition-fast) !important;
 }
 
 .nav-links button:hover::after {
   transform: scaleX(1); transform-origin: left;
 }
 
-/* Hero Section */
+/* Hero */
 .hero {
   min-height: 100vh;
   position: relative;
@@ -247,6 +250,7 @@ h3 { font-size: 1.5rem; letter-spacing: -0.02em; font-family: var(--font-family-
   z-index: -1;
   transform: scale(1.1);
   animation: slowPan 30s ease-in-out infinite alternate;
+  transition: none !important;
 }
 
 @keyframes slowPan {
@@ -254,11 +258,11 @@ h3 { font-size: 1.5rem; letter-spacing: -0.02em; font-family: var(--font-family-
   100% { transform: scale(1.1) translateX(2%); }
 }
 
-/* Reveal Animations triggered by IntersectionObserver */
+/* Scroll Reveals */
 .reveal {
   opacity: 0;
   transform: translateY(60px);
-  transition: all 1.2s var(--ease-out-expo);
+  transition: all 1.2s var(--ease-out-expo) !important;
 }
 
 .reveal.is-visible {
@@ -293,7 +297,7 @@ h3 { font-size: 1.5rem; letter-spacing: -0.02em; font-family: var(--font-family-
 .car-image-wrapper img {
   width: 100%; height: 100%;
   object-fit: cover;
-  transition: transform 1.5s var(--ease-out-expo);
+  transition: transform 1.5s var(--ease-out-expo) !important;
 }
 
 .model-card:hover .car-image-wrapper img {
@@ -310,20 +314,20 @@ h3 { font-size: 1.5rem; letter-spacing: -0.02em; font-family: var(--font-family-
   align-items: flex-end;
 }
 
-/* Table */
+/* Comparison Table */
 .comparison-table { width: 100%; border-collapse: collapse; }
-.comparison-table th, .comparison-table td { 
-  padding: 2.5rem 1rem; 
-  text-align: left; 
-  border-bottom: 1px solid var(--color-border); 
+.comparison-table th, .comparison-table td {
+  padding: 2.5rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
 }
-.comparison-table th { 
-  font-family: var(--font-family-display); 
-  font-size: 1.5rem; 
-  color: var(--color-text-primary); 
+.comparison-table th {
+  font-family: var(--font-family-display);
+  font-size: 1.5rem;
+  color: var(--color-text-primary);
 }
-.comparison-table td { 
-  font-size: 1.25rem; 
+.comparison-table td {
+  font-size: 1.25rem;
   color: var(--color-text-secondary);
 }
 
@@ -337,12 +341,12 @@ h3 { font-size: 1.5rem; letter-spacing: -0.02em; font-family: var(--font-family-
   color: var(--color-text-primary);
   font-family: var(--font-family-display);
   font-size: 1.5rem;
-  transition: border-color var(--transition-fast);
-  color-scheme: dark; /* Ensures native date picker is dark */
+  transition: border-color var(--transition-fast) !important;
+  color-scheme: dark;
 }
 .input-field:focus { outline: none; border-color: var(--color-accent); }
 
-/* AI Widget tweaks for new theme */
+/* AI Widget Container */
 .ai-widget-container {
   position: fixed;
   bottom: 2rem;
@@ -366,7 +370,7 @@ h3 { font-size: 1.5rem; letter-spacing: -0.02em; font-family: var(--font-family-
   flex-direction: column;
   overflow: hidden;
   transform-origin: bottom right;
-  transition: transform 0.6s var(--ease-out-expo), opacity 0.6s ease;
+  transition: transform 0.6s var(--ease-out-expo), opacity 0.6s ease !important;
   pointer-events: auto;
 }
 
@@ -380,6 +384,7 @@ h3 { font-size: 1.5rem; letter-spacing: -0.02em; font-family: var(--font-family-
   padding: 1.5rem;
   border-bottom: 1px solid var(--color-border);
   background: transparent;
+  position: relative; /* for dropdown positioning */
 }
 
 .ai-chat-messages {
@@ -414,6 +419,12 @@ h3 { font-size: 1.5rem; letter-spacing: -0.02em; font-family: var(--font-family-
   border-bottom-left-radius: 4px;
 }
 
+.message-error {
+  background: rgba(255, 50, 50, 0.1) !important;
+  border: 1px solid rgba(255, 50, 50, 0.2);
+  color: #ff8888 !important;
+}
+
 .ai-chat-input-area {
   padding: 1.5rem;
   border-top: 1px solid var(--color-border);
@@ -432,9 +443,10 @@ h3 { font-size: 1.5rem; letter-spacing: -0.02em; font-family: var(--font-family-
   padding: 1rem 1.5rem;
   border-radius: 50px;
   outline: none;
-  transition: border-color var(--transition-fast);
+  transition: border-color var(--transition-fast) !important;
 }
 .ai-chat-input:focus { border-color: var(--color-accent); }
+.ai-chat-input:disabled { opacity: 0.5; }
 
 .ai-chat-send {
   background: var(--color-accent);
@@ -443,11 +455,11 @@ h3 { font-size: 1.5rem; letter-spacing: -0.02em; font-family: var(--font-family-
   border-radius: 50%;
   color: var(--color-bg-primary);
   display: flex; align-items: center; justify-content: center;
-  transition: transform var(--transition-fast);
+  transition: transform var(--transition-fast), opacity 0.2s ease !important;
 }
+.ai-chat-send:hover:not(:disabled) { transform: scale(1.1); }
 
-.ai-chat-send:hover { transform: scale(1.1); }
-
+/* FAB */
 .ai-fab {
   width: 72px; height: 72px;
   border-radius: 50%;
@@ -455,33 +467,32 @@ h3 { font-size: 1.5rem; letter-spacing: -0.02em; font-family: var(--font-family-
   border: none;
   color: var(--color-bg-primary);
   display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 10px 40px rgba(0, 255, 102, 0.3);
-  transition: transform 0.4s var(--ease-out-expo);
+  box-shadow: 0 10px 40px color-mix(in srgb, var(--color-accent) 30%, transparent);
+  transition: transform 0.4s var(--ease-out-expo), background 0.35s ease, box-shadow 0.35s ease !important;
   pointer-events: auto;
 }
-
 .ai-fab:hover { transform: scale(1.1); }
 
-/* Animations */
+/* ── Animations ── */
+
+/* Highlight pulse — uses CSS variable so it changes with theme */
 .highlight-pulse {
   animation: borderPulse 1.5s infinite;
 }
 
 @keyframes borderPulse {
-  0% { box-shadow: 0 0 0 0 rgba(0, 255, 102, 0.4); }
-  70% { box-shadow: 0 0 0 20px rgba(0, 255, 102, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(0, 255, 102, 0); }
+  0%   { box-shadow: 0 0 0 0px color-mix(in srgb, var(--color-accent) 40%, transparent); }
+  70%  { box-shadow: 0 0 0 20px color-mix(in srgb, var(--color-accent) 0%, transparent); }
+  100% { box-shadow: 0 0 0 0px color-mix(in srgb, var(--color-accent) 0%, transparent); }
 }
 
 @keyframes slideInUp {
   from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-/* NEW AI WIDGET STYLES */
+/* Toast */
 .ai-toast {
-  background: var(--color-accent);
-  color: #000;
   padding: 0.75rem 1.5rem;
   border-radius: 100px;
   font-weight: 600;
@@ -489,25 +500,20 @@ h3 { font-size: 1.5rem; letter-spacing: -0.02em; font-family: var(--font-family-
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  box-shadow: 0 10px 30px rgba(0, 255, 102, 0.3);
   margin-bottom: 1rem;
   pointer-events: auto;
 }
 
+/* Mic button */
 .ai-mic-btn {
   background: transparent;
   border: 1px solid var(--color-border);
   width: 52px; height: 52px;
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  transition: all var(--transition-fast);
 }
-
-.ai-mic-btn:hover {
-  background: rgba(255,255,255,0.05);
-  border-color: var(--color-text-secondary);
-}
-
+.ai-mic-btn:hover { background: rgba(255,255,255,0.05); border-color: var(--color-text-secondary); }
+.ai-mic-btn:disabled { opacity: 0.4; }
 .ai-mic-btn.listening {
   background: var(--color-accent);
   border-color: var(--color-accent);
@@ -515,25 +521,15 @@ h3 { font-size: 1.5rem; letter-spacing: -0.02em; font-family: var(--font-family-
 }
 
 @keyframes pulse {
-  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0,255,102,0.4); }
-  50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(0,255,102,0); }
-  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0,255,102,0); }
+  0%   { transform: scale(1);    box-shadow: 0 0 0 0px  color-mix(in srgb, var(--color-accent) 40%, transparent); }
+  50%  { transform: scale(1.05); box-shadow: 0 0 0 10px color-mix(in srgb, var(--color-accent) 0%,  transparent); }
+  100% { transform: scale(1);    box-shadow: 0 0 0 0px  color-mix(in srgb, var(--color-accent) 0%,  transparent); }
 }
 
-.ai-suggestion-chip:hover {
-  background: rgba(255,255,255,0.1) !important;
-  color: var(--color-text-primary) !important;
-}
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-.hide-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-.hide-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-/* NEW AI WIDGET COMPONENT STYLES */
+/* Gradient top border on chat window */
 .ai-gradient-border {
   position: absolute;
   top: 0; left: 0; right: 0;
@@ -541,44 +537,40 @@ h3 { font-size: 1.5rem; letter-spacing: -0.02em; font-family: var(--font-family-
   background: linear-gradient(90deg, #00ff66, #00b3ff, #aa00ff, #00ff66);
   background-size: 300% 100%;
   animation: gradientPan 3s linear infinite;
+  transition: none !important;
 }
 
 @keyframes gradientPan {
-  0% { background-position: 0% 0%; }
+  0%   { background-position: 0% 0%; }
   100% { background-position: 100% 0%; }
 }
 
+/* AI Avatar */
 .ai-avatar {
-  width: 32px;
-  height: 32px;
+  width: 32px; height: 32px;
   background: rgba(0, 255, 102, 0.1);
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   border: 1px solid rgba(0, 255, 102, 0.3);
   box-shadow: 0 0 10px rgba(0, 255, 102, 0.2);
 }
 
+/* Header buttons */
 .ai-header-btn {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: var(--color-text-secondary);
-  width: 32px;
-  height: 32px;
+  width: 32px; height: 32px;
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all var(--transition-fast);
+  display: flex; align-items: center; justify-content: center;
 }
-
 .ai-header-btn:hover {
   background: rgba(255, 255, 255, 0.1);
   color: var(--color-text-primary);
   transform: scale(1.05);
 }
 
+/* Model picker */
 .ai-model-picker {
   display: flex;
   align-items: center;
@@ -591,14 +583,9 @@ h3 { font-size: 1.5rem; letter-spacing: -0.02em; font-family: var(--font-family-
   margin-top: 1rem;
   font-size: 0.8rem;
   color: var(--color-text-secondary);
-  transition: border-color var(--transition-fast);
   justify-content: space-between;
 }
-
-.ai-model-picker:hover {
-  border-color: rgba(255, 255, 255, 0.2);
-  color: var(--color-text-primary);
-}
+.ai-model-picker:hover { border-color: rgba(255, 255, 255, 0.2); color: var(--color-text-primary); }
 
 .ai-model-dropdown {
   position: absolute;
@@ -630,18 +617,9 @@ h3 { font-size: 1.5rem; letter-spacing: -0.02em; font-family: var(--font-family-
   color: var(--color-text-secondary);
   font-size: 0.85rem;
   text-align: left;
-  transition: all 0.2s;
 }
-
-.ai-model-option:hover {
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--color-text-primary);
-}
-
-.ai-model-option.active {
-  background: rgba(0, 255, 102, 0.1);
-  color: var(--color-accent);
-}
+.ai-model-option:hover { background: rgba(255, 255, 255, 0.05); color: var(--color-text-primary); }
+.ai-model-option.active { background: rgba(0, 255, 102, 0.1); color: var(--color-accent); }
 
 .ai-model-badge {
   background: rgba(0, 255, 102, 0.2);
@@ -654,6 +632,7 @@ h3 { font-size: 1.5rem; letter-spacing: -0.02em; font-family: var(--font-family-
   letter-spacing: 0.05em;
 }
 
+/* Suggestion chips */
 .ai-suggestions {
   display: flex;
   flex-direction: row;
@@ -671,12 +650,10 @@ h3 { font-size: 1.5rem; letter-spacing: -0.02em; font-family: var(--font-family-
   border-radius: 100px;
   color: var(--color-text-secondary);
   font-size: 0.8rem;
-  transition: all 0.3s;
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
-
 .ai-chip:hover {
   background: rgba(0, 255, 102, 0.05);
   border-color: rgba(0, 255, 102, 0.3);
@@ -684,41 +661,32 @@ h3 { font-size: 1.5rem; letter-spacing: -0.02em; font-family: var(--font-family-
   transform: translateY(-2px);
 }
 
-.message-error {
-  background: rgba(255, 50, 50, 0.1) !important;
-  border: 1px solid rgba(255, 50, 50, 0.2);
-  color: #ff8888 !important;
-}
-
+/* Retry button */
 .ai-retry-btn {
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
-  margin-top: 0.5rem;
   padding: 0.25rem 0.75rem;
   background: rgba(255, 50, 50, 0.2);
   border: none;
   border-radius: 4px;
   color: #fff;
   font-size: 0.75rem;
-  transition: 0.2s;
 }
+.ai-retry-btn:hover { background: rgba(255, 50, 50, 0.4); }
 
-.ai-retry-btn:hover {
-  background: rgba(255, 50, 50, 0.4);
-}
-
+/* FAB pulse — uses CSS variable */
 .ai-fab-pulse {
   animation: fabPulse 2s infinite;
 }
 
 @keyframes fabPulse {
-  0% { box-shadow: 0 0 0 0 rgba(0, 255, 102, 0.6); }
-  70% { box-shadow: 0 0 0 20px rgba(0, 255, 102, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(0, 255, 102, 0); }
+  0%   { box-shadow: 0 0 0 0px  color-mix(in srgb, var(--color-accent) 60%, transparent); }
+  70%  { box-shadow: 0 0 0 20px color-mix(in srgb, var(--color-accent) 0%,  transparent); }
+  100% { box-shadow: 0 0 0 0px  color-mix(in srgb, var(--color-accent) 0%,  transparent); }
 }
 
 @keyframes dotBounce {
   0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
-  40% { transform: scale(1); opacity: 1; }
+  40%           { transform: scale(1); opacity: 1; }
 }
