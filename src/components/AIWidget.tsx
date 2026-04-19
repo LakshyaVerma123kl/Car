@@ -11,6 +11,7 @@ interface AIWidgetProps {
   setCurrency: React.Dispatch<React.SetStateAction<'INR' | 'USD'>>;
   setHighlightedModelId: React.Dispatch<React.SetStateAction<string | null>>;
   setBookingData: React.Dispatch<React.SetStateAction<{ model: string; date: string; city: string }>>;
+  setThemeMode: React.Dispatch<React.SetStateAction<'standard' | 'track'>>;
   allCars: CarModel[];
 }
 
@@ -78,7 +79,7 @@ const LoadingDots = () => (
 
 export default function AIWidget({
   scrollToSection, setFilteredModels, setComparisonModels,
-  setCurrency, setHighlightedModelId, setBookingData, allCars
+  setCurrency, setHighlightedModelId, setBookingData, setThemeMode, allCars
 }: AIWidgetProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedModel, setSelectedModel] = useState<ModelId>('llama-3.3-70b-versatile');
@@ -206,6 +207,11 @@ export default function AIWidget({
       name: "highlightModel",
       description: "Highlights a specific car in the fleet grid. Automatically clears filters first. Use when recommending or showing a specific car.",
       parameters: { type: "object", properties: { modelName: { type: "string" } }, required: ["modelName"] }
+    },
+    {
+      name: "setThemeMode",
+      description: "Changes the website theme. Use 'track' for Racing Red (aggressive, sporty, performance) or 'standard' for Neon Green (eco, default).",
+      parameters: { type: "object", properties: { mode: { type: "string", enum: ["standard","track"] } }, required: ["mode"] }
     }
   ];
 
@@ -261,6 +267,13 @@ export default function AIWidget({
           }
           return `Model "${args.modelName}" not found.`;
         }
+        case 'setThemeMode':
+          if (args.mode === 'track' || args.mode === 'standard') {
+            setThemeMode(args.mode);
+            showToast(`${args.mode === 'track' ? 'Track' : 'Standard'} Mode Activated`);
+            return `Theme changed to ${args.mode} mode.`;
+          }
+          return 'Invalid theme mode.';
         default: return 'Unknown tool.';
       }
     } catch { return 'Tool execution failed.'; }
@@ -279,8 +292,9 @@ RULES:
 1. ALWAYS call a tool first, then explain what you did.
 2. Use highlightModel when showing/recommending a specific car — it auto-clears filters.
 3. Use exact car names: "Aether SUV", "Zephyr Sedan", "Nova Coupe", "Apex Hypercar".
-4. Use **bold** for car names and key info in your response.
-5. Keep responses under 3 sentences.`;
+4. Use setThemeMode('track') when users want a sporty, aggressive, or performance-oriented vibe.
+5. Use **bold** for car names and key info in your response.
+6. Keep responses under 3 sentences.`;
 
   // ── API Handlers ──
   const callGemini = async (userMsg: string, model: string): Promise<string> => {

@@ -11,12 +11,21 @@ function App() {
   const [highlightedModelId, setHighlightedModelId] = useState<string | null>(null);
   const [bookingData, setBookingData] = useState({ model: '', date: '', city: '' });
   const [scrolled, setScrolled] = useState(false);
+  const [themeMode, setThemeMode] = useState<'standard' | 'track'>('standard');
 
   // Custom Cursor Refs
   const cursorDotRef = useRef<HTMLDivElement>(null);
 
   // Scroll Observer Refs
   const revealRefs = useRef<(HTMLElement | null)[]>([]);
+
+  useEffect(() => {
+    if (themeMode === 'track') {
+      document.documentElement.style.setProperty('--color-accent', '#ff003c');
+    } else {
+      document.documentElement.style.setProperty('--color-accent', '#00ff66');
+    }
+  }, [themeMode]);
 
   useEffect(() => {
     // Navbar Scroll
@@ -343,6 +352,7 @@ function App() {
         setCurrency={setCurrency}
         setHighlightedModelId={setHighlightedModelId}
         setBookingData={setBookingData}
+        setThemeMode={setThemeMode}
         allCars={cars}
       />
     </div>
